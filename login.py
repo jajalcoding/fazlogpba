@@ -1,12 +1,14 @@
 import http.client
 import mimetypes
-import os
+import os,ssl
 
-# just to ignore cert ssl
-if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):
-    ssl._create_default_https_context = ssl._create_unverified_context
 # export PYTHONHTTPSVERIFY=0
+# just to ignore cert ssl
 # using all hardcoded URL, user and pass, login to FAZ
+
+if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
+    getattr(ssl, '_create_unverified_context', None)):
+    ssl._create_default_https_context = ssl._create_unverified_context
 
 conn = http.client.HTTPSConnection("54.254.145.25")
 payloaddict = {
@@ -17,21 +19,20 @@ payloaddict = {
    "passwd": "password123", },
    "url": "/sys/login/user" }
 ] 
-}	
+}
+
 headers = {
   'Content-Type': 'text/plain'
 }
 
-while True:
-  conn.request("POST", "/jsonrpc", str(payloaddict), headers)
-  res = conn.getresponse()
-  data = res.read()
-  # print(data.decode("utf-8"))
-  x=eval(data);
-  sessionid=x['session'];
-  print(sessionid)
-  if ('\\' not in sessionid) :
-    break
+
+conn.request("POST", "/jsonrpc", str(payloaddict), headers)
+res = conn.getresponse()
+data = res.read()
+# print(data.decode("utf-8"))
+x=eval(data);
+sessionid=x['session'];
+print(sessionid)
 
 # above is a trick temporary to make sure we get session id without character \
 # unsafe way, just for poc to get the session

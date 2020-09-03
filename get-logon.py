@@ -1,6 +1,7 @@
 import http.client
 import mimetypes
-import os
+import os,ssl
+import pdb
 
 # just to ignore cert ssl
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):
@@ -29,7 +30,8 @@ payloaddict2={
   "params": [
     {
       "apiver": 3,
-      "url": "/logview/adom/root/logsearch/"
+      "url": "/logview/adom/root/logsearch/",
+      "limit": 1000
     }
   ],
   "session": "xx"
@@ -38,12 +40,15 @@ payloaddict2={
 payloaddict2['session']=sessionid
 payloaddict2['params'][0]['url']="/logview/adom/root/logsearch/"+str(authtid)
 #print(payloaddict2['params'][0]['url'])
-conn.request("POST", "/jsonrpc", str(payloaddict2), headers)
+strfinal=str(payloaddict2).replace("\\\\","\\")
+conn.request("POST", "/jsonrpc", strfinal, headers)
 res = conn.getresponse()
 data = res.read()
 #print(data)
 dataku=eval(data)
 
+
 for dataitem in dataku['result']['data']:
-  print dataitem['itime']+" "+dataitem['srcip']+" "+dataitem['user']
- 
+  print (dataitem['itime']+" "+dataitem['srcip']+" "+dataitem['user']+" "+dataitem['action'])
+#pdb.set_trace()
+

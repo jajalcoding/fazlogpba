@@ -36,7 +36,8 @@ payloaddict2={
 payloaddict2['session']=sessionid
 payloaddict2['params'][0]['url']="/logview/adom/root/logsearch/"+str(authtid)
 #print(payloaddict2['params'][0]['url'])
-conn.request("POST", "/jsonrpc", str(payloaddict2), headers)
+strfinal=str(payloaddict2).replace("\\\\","\\")
+conn.request("POST", "/jsonrpc", strfinal , headers)
 res = conn.getresponse()
 data = res.read()
 #print(data)
@@ -46,4 +47,4 @@ dataku=eval(data)
 for dataitem in dataku['result']['data']:
   print dataitem['itime']+" "+dataitem['saddr']+" "+dataitem['nat']+" "+dataitem['portbegin']+" "+dataitem['portend']
 
- 
+print('Total rows:'+str(dataku['result']['return-lines']))
